@@ -3,46 +3,51 @@ import Form from "react-bootstrap/Form";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
-const Login = () => {
+
+const Login = ({setUsuarioLogueado}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const navegacion = useNavigate()
 
   const onSubmit = (data) => {
     console.log(data);
-    if (data.email===import.meta.env.VITE_EMAIL && data.password===import.meta.env.VITE_PASSWORD){
-      //redireccionaria a la pagina del administrador
-      //mostrar un cartel de bienvenido
-       Swal.fire({
-  title: "Bienvenido Administrador",
-  text: "Ingresando al sistema",
-  icon: "success"
-});  
-    }else{
+    if (
+      data.email === import.meta.env.VITE_EMAIL &&
+      data.password === import.meta.env.VITE_PASSWORD
+    ) {
+        //actualizar el state de la sesion del usuario
+        setUsuarioLogueado(true)
+        //mostrar un cartel de bienvenido
+        Swal.fire({
+            title: "Bienvienido Administrador",
+            text: "Ingresando al sistema",
+            icon: "success",
+            //redireccionaria a la papgina del administrador
+        });
+        navegacion('/administrador')
+    } else {
       Swal.fire({
-  title: "Ocurrio un error",
-  text: "Credenciales Incorrectas!",
-  icon: "error"
-});  
+        title: "Ocurrio un error",
+        text: "Credenciales incorrectas",
+        icon: "error",
+      });
     }
   };
 
   return (
-    <main
-      classNa me="container
-  "
-    >
+    <main className="container my-4">
       <h1>Login</h1>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
+          <Form.Label>Email</Form.Label>
           <Form.Control
             type="email"
             placeholder="Enter email"
             {...register("email", {
-              require: "el email es un dato obligatorio",
+              required: "El email es un dato obligatorio",
               pattern: {
                 value:
                   /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
@@ -60,7 +65,7 @@ const Login = () => {
             type="password"
             placeholder="Password"
             {...register("password", {
-              require: "La contraseña es un dato obligatorio",
+              required: "La contraseña es un dato obligatorio",
               pattern: {
                 value:
                   /^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,16}$/,
@@ -69,9 +74,10 @@ const Login = () => {
               },
             })}
           />
-          <Form.Text className="text-danger">{errors.password?.message}</Form.Text>
+          <Form.Text className="text-danger">
+            {errors.password?.message}
+          </Form.Text>
         </Form.Group>
-
         <Button variant="primary" type="submit">
           Enviar
         </Button>

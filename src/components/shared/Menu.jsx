@@ -1,24 +1,52 @@
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router-dom";
 
-const Menu = () => {
+const Menu = ({ usuarioLogueado, setUsuarioLogueado }) => {
+  const navigate = useNavigate();
+
+  const manejarLogout = () => {
+    // Apagar sesión
+    setUsuarioLogueado(false);
+    // Limpiar localStorage
+    localStorage.removeItem("usuarioLogueado");
+    // Volver al inicio
+    navigate("/");
+  };
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
+    <Navbar expand="lg" bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand>
-          <b>
-            <i className="bi bi-code-slash"></i> CODE
-          </b>
+        {/* BRAND */}
+        <Navbar.Brand as={NavLink} to="/">
+          CRUD Servicios
         </Navbar.Brand>
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-        
-          <Nav className="ms-auto">
-            <NavLink className="nav-link" to={'/'}>Inicio</NavLink>
-            <NavLink className="nav-link" to={'/administrador'}>Administrador</NavLink>
-            <Button className="nav-link">Logout</Button>
-            <NavLink className="nav-link" to={'/login'}>Login</NavLink>
+          <Nav className="me-auto">
+            <Nav.Link as={NavLink} to="/">
+              Inicio
+            </Nav.Link>
+
+            {!usuarioLogueado ? (
+              <Nav.Link as={NavLink} to="/login">
+                Login
+              </Nav.Link>
+            ) : (
+              <Nav.Link as={NavLink} to="/administrador">
+                Administrador
+              </Nav.Link>
+            )}
           </Nav>
+
+          {usuarioLogueado && (
+            <Button
+              variant="outline-light"
+              onClick={manejarLogout}
+            >
+              Logout
+            </Button>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

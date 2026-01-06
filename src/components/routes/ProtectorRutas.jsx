@@ -1,5 +1,5 @@
 
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectorRutas = ({usuarioLogueado}) => {
     //pregunto si no estoy logueado

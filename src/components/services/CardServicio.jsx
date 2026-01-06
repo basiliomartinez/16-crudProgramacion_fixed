@@ -1,24 +1,29 @@
-import { Card, Button, Col } from 'react-bootstrap';
+import { Card, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-
-const CardServicio = () => {
-    return (
+const CardServicio = ({ servicio }) => {
+  return (
     <Col>
-       <Card style={{ width: '18rem' }}>
-      <Card.Img variant="top" src="https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg" />
-      <Card.Body>
-        <Card.Title>Sitio Web Institucional (5-7 Paginas)</Card.Title>
-        <Card.Text>
-                   Web profesional *responsive* con secciones clave: Inicio, Servicios, Quiénes Somos, Contacto y Blog (sin funcionalidad de publicación).
-        </Card.Text>
-        <Card.Text>  
-            Precio: $ 300.000
-        </Card.Text>
-        <Button variant="primary">Ver detalle</Button>
-      </Card.Body>
-    </Card>
+      <Card className="h-100">
+        <Card.Img
+          variant="top"
+          src={servicio.imagen}
+          alt={servicio.servicio}
+          style={{ objectFit: "cover", height: "180px" }}
+        />
+        <Card.Body className="d-flex flex-column">
+          <Card.Title>{servicio.servicio}</Card.Title>
+          <Card.Text className="flex-grow-1">{servicio.descripcion_breve}</Card.Text>
+          <Card.Text className="fw-bold">
+            Precio: ${Number(servicio.precio).toLocaleString("es-AR")}
+          </Card.Text>
+          <Link className="btn btn-primary" to={`/detalle/${servicio.id}`}>
+            Ver detalle
+          </Link>
+        </Card.Body>
+      </Card>
     </Col>
-    );
+  );
 };
 
 export default CardServicio;

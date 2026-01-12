@@ -1,52 +1,51 @@
-import { useParams, Link } from "react-router-dom";
-import { Badge } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import { obtenerServicioApi } from "../../helpers/queries";
 
-const DetalleServicio = ({ servicios }) => {
+const DetalleServicio = () => {
   const { id } = useParams();
+  const [servicio, setServicio] = useState(null);
 
-  const servicio = servicios.find((item) => item.id === id);
+  useEffect(() => {
+    const cargar = async () => {
+      const resp = await obtenerServicioApi(id);
+      if (resp && resp.status === 200) {
+        const data = await resp.json();
+        setServicio(data);
+      } else {
+        setServicio(null);
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo cargar el detalle del servicio.",
+          icon: "error",
+        });
+      }
+    };
+
+    cargar();
+  }, [id]);
 
   if (!servicio) {
     return (
       <main className="container my-4">
-        <h1>Servicio no encontrado</h1>
-        <p>Puede que haya sido eliminado o que el enlace esté mal.</p>
-        <Link className="btn btn-primary" to={"/"}>
-          Volver al inicio
-        </Link>
+        <p>Cargando...</p>
       </main>
     );
   }
 
   return (
     <main className="container my-4">
-      <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
-        <div>
-          <h1 className="mb-2">{servicio.servicio}</h1>
-          <Badge bg="secondary">{servicio.categoria}</Badge>
-        </div>
-        <Link className="btn btn-outline-primary" to={"/"}>
-          Volver
-        </Link>
-      </div>
-
-      <hr />
-
-      <div className="row g-4">
-        <div className="col-12 col-lg-6">
-          <img
-            src={servicio.imagen}
-            alt={servicio.servicio}
-            className="img-fluid rounded"
-          />
-        </div>
-        <div className="col-12 col-lg-6">
-          <h4 className="fw-bold">
-            Precio: ${Number(servicio.precio).toLocaleString("es-AR")}
-          </h4>
-          <p className="mt-3">{servicio.descripcion_amplia}</p>
-        </div>
-      </div>
+      <h1>{servicio.servicio}</h1>
+      <p><b>Precio:</b> ${Number(servicio.precio).toLocaleString("es-AR")}</p>
+      <p><b>Categoría:</b> {servicio.categoria}</p>
+      <p><b>Descripción breve:</b> {servicio.descripcion_breve}</p>
+      <p><b>Descripción amplia:</b> {servicio.descripcion_amplia}</p>
+      <img
+        src={servicio.imagen}
+        alt={servicio.servicio}
+        style={{ maxWidth: "100%", borderRadius: "8px" }}
+      />
     </main>
   );
 };

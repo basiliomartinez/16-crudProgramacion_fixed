@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { login } from "../../helpers/queries.js";
 
 const Login = ({setUsuarioLogueado}) => {
   const {
@@ -12,23 +13,26 @@ const Login = ({setUsuarioLogueado}) => {
   } = useForm();
   const navegacion = useNavigate()
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
-    if (
-      data.email === import.meta.env.VITE_EMAIL &&
-      data.password === import.meta.env.VITE_PASSWORD
-    ) {
-        //actualizar el state de la sesion del usuario
-        setUsuarioLogueado(true)
-        //mostrar un cartel de bienvenido
+const respuesta= await login(data)
+if (respuesta && respuesta.status === 200){
+  //guardar el usuario logueado
+const usuarioLogueado= await respuesta.json()
+setUsuarioLogueado({
+  nombre: usuarioLogueado.nombre,
+  token: usuarioLogueado.token
+})
+//mostrar un cartel de bienvenido
         Swal.fire({
-            title: "Bienvienido Administrador",
+            title: `Bienvenido ${usuarioLogueado.nombre}`,
             text: "Ingresando al sistema",
             icon: "success",
             //redireccionaria a la papgina del administrador
         });
         navegacion('/administrador')
-    } else {
+}
+ else {
       Swal.fire({
         title: "Ocurrio un error",
         text: "Credenciales incorrectas",

@@ -16,7 +16,10 @@ export const crearServiciosApi = async (servicio) => {
   try {
     const respuesta = await fetch(urlServicios, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("usuarioKey")).token}`,
+      },
       body: JSON.stringify(servicio),
     });
     return respuesta;
@@ -30,6 +33,10 @@ export const borrarServiciosApi = async (id) => {
   try {
     const respuesta = await fetch(`${urlServicios}/${id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("usuarioKey")).token}`,
+      },
     });
     return respuesta;
   } catch (error) {
@@ -54,7 +61,10 @@ export const editarServicioApi = async (id, servicioEditado) => {
   try {
     const respuesta = await fetch(`${urlServicios}/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("usuarioKey")).token}`,
+      },
       body: JSON.stringify(servicioEditado),
     });
     return respuesta;
@@ -65,7 +75,7 @@ export const editarServicioApi = async (id, servicioEditado) => {
 
 export const login = async (usuario) => {
   try {
-    const respuesta = await fetch(urlUsuarios+'/login', {
+    const respuesta = await fetch(urlUsuarios + "/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(usuario),

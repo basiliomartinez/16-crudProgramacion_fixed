@@ -17,7 +17,7 @@ const CardServicio = ({ servicio }) => {
           <Card.Text className="fw-bold">
             Precio: ${Number(servicio.precio).toLocaleString("es-AR")}
           </Card.Text>
-          <Link className="btn btn-primary" to={`/detalle/${servicio.id}`}>
+          <Link className="btn btn-primary" to={`/detalle/${servicio._id}`}>
             Ver detalle
           </Link>
         </Card.Body>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { obtenerServicioApi } from "../../helpers/queries";
+import { obtenerServicioApi } from "../../helpers/queries.js";
 
 const DetalleServicio = () => {
   const { id } = useParams();

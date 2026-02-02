@@ -18,6 +18,7 @@ const FormularioServicio = () => {
     register,
     handleSubmit,
     reset,
+    resetField, //agregar el reset del input tipo field
     formState: { errors },
   } = useForm({
     defaultValues: {

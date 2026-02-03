@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
-  buscarServicioApi,
+  obtenerServicioApi,
   crearServicioApi,
   editarServicioApi,
 } from "../../helpers/queries";
@@ -18,13 +18,12 @@ const FormularioServicio = ({ titulo }) => {
     formState: { errors },
     reset,
     setValue,
-    resetField, // reset del input file
+    resetField,
   } = useForm();
 
   const { id } = useParams();
   const navegacion = useNavigate();
 
-  // states para imagen actual (URL) y preview (local)
   const [imagenActual, setImagenActual] = useState("");
   const [preview, setPreview] = useState("");
 
@@ -34,7 +33,7 @@ const FormularioServicio = ({ titulo }) => {
 
   const cargarDatos = async () => {
     if (titulo === "Editar servicio") {
-      const respuestaServicio = await buscarServicioApi(id);
+      const respuestaServicio = await obtenerServicioApi(id);
 
       if (respuestaServicio && respuestaServicio.status === 200) {
         const servicioBuscado = await respuestaServicio.json();
@@ -45,15 +44,12 @@ const FormularioServicio = ({ titulo }) => {
         setValue("descripcion_breve", servicioBuscado.descripcion_breve);
         setValue("descripcion_amplia", servicioBuscado.descripcion_amplia);
 
-        // en edición, guardo la URL de imagen existente
         setImagenActual(servicioBuscado.imagen);
       }
     }
   };
 
   const onSubmit = async (data) => {
-    // armamos el objeto para enviar:
-    // imagen: File (si el usuario eligió una nueva)
     const servicioForm = {
       ...data,
       imagen: data.imagen?.[0], // File o undefined
@@ -81,7 +77,7 @@ const FormularioServicio = ({ titulo }) => {
         });
       }
     } else {
-      const respuestaEditarServicio = await editarServicioApi(servicioForm, id);
+      const respuestaEditarServicio = await editarServicioApi(id, servicioForm);
 
       if (respuestaEditarServicio && respuestaEditarServicio.status === 200) {
         Swal.fire({
@@ -113,14 +109,8 @@ const FormularioServicio = ({ titulo }) => {
             placeholder="Ej: Diseño de sitio web institucional"
             {...register("servicio", {
               required: "El servicio es un dato obligatorio",
-              minLength: {
-                value: 5,
-                message: "El servicio debe contener como minimo 5 caracteres",
-              },
-              maxLength: {
-                value: 100,
-                message: "El servicio debe contener como maximo 100 caracteres",
-              },
+              minLength: { value: 5, message: "Mínimo 5 caracteres" },
+              maxLength: { value: 100, message: "Máximo 100 caracteres" },
             })}
           />
           <Form.Text className="text-danger">
@@ -135,21 +125,13 @@ const FormularioServicio = ({ titulo }) => {
             placeholder="Ej: 50"
             {...register("precio", {
               required: "El precio es un valor obligatorio",
-              min: {
-                value: 50,
-                message: "El precio minimo del producto debe ser de almenos $50",
-              },
-              max: {
-                value: 1000000,
-                message:
-                  "El precio maximo de un producto debe ser de hasta $1000000",
-              },
+              min: { value: 50, message: "Mínimo $50" },
+              max: { value: 1000000, message: "Máximo $1000000" },
             })}
           />
           <Form.Text className="text-danger">{errors.precio?.message}</Form.Text>
         </Form.Group>
 
-        {/* Input FILE + preview (Cloudinary) */}
         <Form.Group className="mb-3" controlId="formImagen">
           <Form.Label>Imagen*</Form.Label>
           <Form.Control
@@ -169,12 +151,8 @@ const FormularioServicio = ({ titulo }) => {
             })}
             onChange={(e) => {
               const file = e.target.files[0];
-
-              if (file) {
-                setPreview(URL.createObjectURL(file));
-              } else {
-                setPreview("");
-              }
+              if (file) setPreview(URL.createObjectURL(file));
+              else setPreview("");
             }}
           />
 
@@ -210,7 +188,7 @@ const FormularioServicio = ({ titulo }) => {
               required: "Debe seleccionar una categoria",
             })}
           >
-            <option value="">Seleccione una opcion</option>
+            <option value="">Seleccione una opción</option>
             <option value="Desarrollo Web">Desarrollo Web</option>
             <option value="Backend y API">Backend & API</option>
             <option value="Consultoría">Consultoría</option>
@@ -224,20 +202,12 @@ const FormularioServicio = ({ titulo }) => {
         <Form.Group className="mb-3" controlId="formDescripcionBreve">
           <Form.Label>Descripción breve*</Form.Label>
           <Form.Control
-            type="text"
             as="textarea"
             placeholder="Ej: Web profesional responsive..."
             {...register("descripcion_breve", {
               required: "La descripción breve es un dato obligatorio",
-              minLength: {
-                value: 5,
-                message: "La descrición breve debe tener almenos 5 caracteres",
-              },
-              maxLength: {
-                value: 250,
-                message:
-                  "La descrición breve debe tener como máximo 250 caracteres",
-              },
+              minLength: { value: 5, message: "Mínimo 5 caracteres" },
+              maxLength: { value: 250, message: "Máximo 250 caracteres" },
             })}
           />
           <Form.Text className="text-danger">
@@ -248,21 +218,13 @@ const FormularioServicio = ({ titulo }) => {
         <Form.Group className="mb-3" controlId="formDescripcionAmplia">
           <Form.Label>Descripción amplia*</Form.Label>
           <Form.Control
-            type="text"
             as="textarea"
             rows={4}
             placeholder="Ej: Desarrollo de un sitio web corporativo..."
             {...register("descripcion_amplia", {
               required: "La descripción amplia es un dato obligatorio",
-              minLength: {
-                value: 10,
-                message: "La descrición amplia debe tener almenos 10 caracteres",
-              },
-              maxLength: {
-                value: 500,
-                message:
-                  "La descrición amplia debe tener como máximo 500 caracteres",
-              },
+              minLength: { value: 10, message: "Mínimo 10 caracteres" },
+              maxLength: { value: 500, message: "Máximo 500 caracteres" },
             })}
           />
           <Form.Text className="text-danger">

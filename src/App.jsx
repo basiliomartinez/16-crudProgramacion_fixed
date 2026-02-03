@@ -44,8 +44,16 @@ function App() {
           element={<ProtectorRutas usuarioLogueado={usuarioLogueado} />}
         >
           <Route index element={<Administrador />} />
-          <Route path="crear" element={<FormularioServicio />} />
-          <Route path="editar/:id" element={<FormularioServicio />} />
+          +{" "}
+          <Route
+            path="crear"
+            element={<FormularioServicio titulo="Crear servicio" />}
+          />
+          +{" "}
+          <Route
+            path="editar/:id"
+            element={<FormularioServicio titulo="Editar servicio" />}
+          />
         </Route>
 
         <Route path="*" element={<Error404 />} />
